@@ -85,7 +85,7 @@ const recuerdos=[
 const grid=document.getElementById('videoGrid');
 recuerdos.forEach((item,index)=>{
   const card=document.createElement('article');card.className='video-card';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Reproducir ${item.title} con audio`);
-  const poster=document.createElement('div');poster.className='video-poster';const video=document.createElement('video');video.preload='none';video.muted=true;video.playsInline=true;poster.append(video);
+  const poster=document.createElement('div');poster.className='video-poster';
   const play=document.createElement('div');play.className='play';play.innerHTML='<span aria-hidden="true">▶</span>';poster.append(play);
   const info=document.createElement('div');info.className='video-info';info.innerHTML=`<h3>${item.title}</h3><span>RECUERDO ${item.number} · CON AUDIO</span>`;card.append(poster,info);
   const open=()=>showVideo(item.src);card.addEventListener('click',open);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});grid.append(card);
