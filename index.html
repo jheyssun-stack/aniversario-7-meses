@@ -73,7 +73,7 @@ y tan especial en todo lo que eres.
 
 Con todo mi cariño,
 Jheyssun ♥</p></article></div>
-<audio id="backgroundMusic" src="besame-remix.mp3" preload="auto" loop></audio><audio id="videoMusic" src="besame-remix.mp3" preload="auto"></audio>
+<audio id="backgroundMusic" src="besame-remix.mp3" preload="auto" loop></audio>
 <div class="music-chip" id="musicChip"><button id="musicToggle" aria-label="Pausar música">Ⅱ</button><span id="musicLabel">Bésame Remix · Nova y Jory</span></div>
 <div class="welcome-gate" id="welcomeGate"><div class="gate-card"><div class="gate-heart">♥</div><div class="gate-image"><img src="anita-spidey.jpg" alt="Hello Kitty y Spider-Man juntos"></div><div class="eyebrow" style="margin:auto"><i>♥</i> 7 meses de nosotros <i>♥</i></div><h1>Una sorpresa<br>para Anita</h1><p>Preparé este rincón con mucho cariño. Toca el corazón para abrirlo y escuchar nuestra canción.</p><button class="gate-button" id="unlockHeart">Abrir con amor&nbsp; ♥</button><div class="gate-note">Con cariño, Jheyssun</div></div></div>
 <script>
@@ -85,7 +85,7 @@ const recuerdos=[
 const grid=document.getElementById('videoGrid');
 recuerdos.forEach((item,index)=>{
   const card=document.createElement('article');card.className='video-card';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Reproducir ${item.title} con audio`);
-  const poster=document.createElement('div');poster.className='video-poster';const video=document.createElement('video');video.src=item.src;video.preload='metadata';video.muted=true;video.playsInline=true;poster.append(video);
+  const poster=document.createElement('div');poster.className='video-poster';const video=document.createElement('video');video.preload='none';video.muted=true;video.playsInline=true;poster.append(video);
   const play=document.createElement('div');play.className='play';play.innerHTML='<span aria-hidden="true">▶</span>';poster.append(play);
   const info=document.createElement('div');info.className='video-info';info.innerHTML=`<h3>${item.title}</h3><span>RECUERDO ${item.number} · CON AUDIO</span>`;card.append(poster,info);
   const open=()=>showVideo(item.src);card.addEventListener('click',open);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});grid.append(card);
@@ -93,15 +93,16 @@ recuerdos.forEach((item,index)=>{
 const viewer=document.getElementById('viewer'),player=document.getElementById('player');
 const memoriesModal=document.getElementById('memoriesModal');
 const backgroundMusic=document.getElementById('backgroundMusic');
-const videoMusic=document.getElementById('videoMusic');
 const musicToggle=document.getElementById('musicToggle');
 const musicLabel=document.getElementById('musicLabel');
 let resumeMusicAfterVideo=false;
 function updateMusicLabel(){const playing=!backgroundMusic.paused;musicToggle.textContent=playing?'Ⅱ':'▶';musicToggle.setAttribute('aria-label',playing?'Pausar música':'Reanudar música');musicLabel.textContent=playing?'Bésame Remix · Nova y Jory':'Nuestra canción · Bésame Remix'}
 function startBackgroundMusic(){backgroundMusic.volume=.48;backgroundMusic.play().then(updateMusicLabel).catch(()=>{musicLabel.textContent='Toca ▶ para escuchar Bésame Remix';updateMusicLabel()})}
-function showVideo(src){resumeMusicAfterVideo=!backgroundMusic.paused;videoMusic.pause();try{videoMusic.currentTime=backgroundMusic.currentTime}catch{}backgroundMusic.pause();updateMusicLabel();player.src=src;player.muted=false;player.volume=1;viewer.classList.add('open');videoMusic.volume=.72;videoMusic.play().catch(()=>{});player.play().catch(()=>{});document.getElementById('viewerClose').focus()}
-function closeVideo(){if(!viewer.classList.contains('open'))return;player.pause();videoMusic.pause();try{backgroundMusic.currentTime=videoMusic.currentTime}catch{}player.removeAttribute('src');player.load();viewer.classList.remove('open');if(resumeMusicAfterVideo)startBackgroundMusic();resumeMusicAfterVideo=false}
-player.addEventListener('pause',()=>videoMusic.pause());player.addEventListener('play',()=>{if(viewer.classList.contains('open'))videoMusic.play().catch(()=>{})});player.addEventListener('ended',()=>videoMusic.pause());
+function showVideo(src){resumeMusicAfterVideo=!backgroundMusic.paused;player.pause();player.src=src;player.preload='auto';player.muted=true;player.volume=1;viewer.classList.add('open');backgroundMusic.volume=.72;backgroundMusic.play().then(updateMusicLabel).catch(updateMusicLabel);player.load();player.play().catch(()=>{});document.getElementById('viewerClose').focus()}
+function closeVideo(){if(!viewer.classList.contains('open'))return;player.pause();player.removeAttribute('src');player.load();viewer.classList.remove('open');backgroundMusic.volume=.48;if(resumeMusicAfterVideo)startBackgroundMusic();else{backgroundMusic.pause();updateMusicLabel()}resumeMusicAfterVideo=false}
+player.addEventListener('pause',()=>{if(viewer.classList.contains('open')){backgroundMusic.pause();updateMusicLabel()}});
+player.addEventListener('play',()=>{if(viewer.classList.contains('open')){backgroundMusic.volume=.72;backgroundMusic.play().then(updateMusicLabel).catch(updateMusicLabel)}});
+player.addEventListener('ended',()=>{backgroundMusic.pause();updateMusicLabel()});
 function openMemories(){memoriesModal.classList.add('open');document.getElementById('memoriesClose').focus()}
 document.getElementById('openMemories').addEventListener('click',openMemories);document.getElementById('openMemoriesBottom').addEventListener('click',openMemories);document.getElementById('memoriesClose').addEventListener('click',()=>memoriesModal.classList.remove('open'));memoriesModal.addEventListener('click',e=>{if(e.target===memoriesModal)memoriesModal.classList.remove('open')});
 document.getElementById('unlockHeart').addEventListener('click',()=>{document.getElementById('welcomeGate').classList.add('dismissed');startBackgroundMusic()});
